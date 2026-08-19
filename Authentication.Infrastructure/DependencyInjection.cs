@@ -31,8 +31,18 @@ public static class DependencyInjection
         services.AddHealthChecks()
             .AddCheck<SqlServerHealthCheck>("sql-server");
 
-        services.Configure<JwtOptions>(
-            configuration.GetSection(JwtOptions.SectionName));
+        services.AddOptions<JwtOptions>()
+        .Bind(configuration.GetSection(JwtOptions.SectionName))
+        .Validate(options =>
+            !string.IsNullOrWhiteSpace(options.Key),
+            "JWT signing key is required.")
+        .Validate(options =>
+            !string.IsNullOrWhiteSpace(options.Issuer),
+            "JWT issuer is required.")
+        .Validate(options =>
+            !string.IsNullOrWhiteSpace(options.Audience),
+            "JWT audience is required.")
+        .ValidateOnStart();
 
         services.Configure<PasswordOptions>(
             configuration.GetSection(PasswordOptions.SectionName));
