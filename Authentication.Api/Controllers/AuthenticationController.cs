@@ -10,11 +10,13 @@ using Authentication.Application.Features.Authentication.Refresh;
 using Authentication.Application.Features.Authentication.Logout;
 using Authentication.Application.Features.Authentication.Sessions;
 using Authentication.Application.Features.Authentication.ChangePassword;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Authentication.Api.Controllers;
 
 [ApiController]
 [Route("api/authentication")]
+[EnableRateLimiting("authentication")]  
 public sealed class AuthenticationController : ControllerBase
 {
     private readonly ISender _sender;

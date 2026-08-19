@@ -68,4 +68,27 @@ public sealed class LoginTests
             HttpStatusCode.Unauthorized,
             response.StatusCode);
     }
+
+    [Fact]
+    public async Task Login_TooManyRequests_Returns429()
+    {
+        HttpResponseMessage? response = null;
+
+        for (var i = 0; i < 11; i++)
+        {
+            response = await _client.PostAsJsonAsync(
+                "/api/authentication/login",
+                new
+                {
+                    email = "rate-limit@example.com",
+                    password = "WrongPassword123!"
+                });
+        }
+
+        Assert.NotNull(response);
+
+        Assert.Equal(
+            HttpStatusCode.TooManyRequests,
+            response.StatusCode);
+    }
 }
