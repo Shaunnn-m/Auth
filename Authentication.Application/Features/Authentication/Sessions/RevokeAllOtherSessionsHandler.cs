@@ -3,6 +3,7 @@ using Authentication.Application.Abstractions.Persistence;
 using Authentication.Application.Common;
 using Authentication.Application.Errors;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Authentication.Application.Features.Authentication.Sessions;
 
@@ -12,15 +13,18 @@ public sealed class RevokeAllOtherSessionsHandler
     private readonly IUserRepository _userRepository;
     private readonly ICurrentUser _currentUser;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ILogger<RevokeAllOtherSessionsHandler> _logger;
 
     public RevokeAllOtherSessionsHandler(
         IUserRepository userRepository,
         ICurrentUser currentUser,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        ILogger<RevokeAllOtherSessionsHandler> logger)
     {
         _userRepository = userRepository;
         _currentUser = currentUser;
         _unitOfWork = unitOfWork;
+        _logger = logger;
     }
 
     public async Task<Result<RevokeSessionResponse>> Handle(
@@ -31,6 +35,7 @@ public sealed class RevokeAllOtherSessionsHandler
 
         if (userId is null)
         {
+            _logger.LogWarning("Authentication bulk session revocation failed: user is not authenticated.");
             return Result<RevokeSessionResponse>.Failure(
                 UserErrors.UserNotAuthenticated);
         }
@@ -49,6 +54,9 @@ public sealed class RevokeAllOtherSessionsHandler
         await _unitOfWork.SaveChangesAsync(
             cancellationToken);
 
+        _logger.LogInformation(
+            "Authentication bulk session revocation succeeded. RevokedSessionCount: {RevokedSessionCount}",
+            sessions.Count);
         return Result<RevokeSessionResponse>.Success(
             new RevokeSessionResponse("All sessions have been successfully revoked"));
     }

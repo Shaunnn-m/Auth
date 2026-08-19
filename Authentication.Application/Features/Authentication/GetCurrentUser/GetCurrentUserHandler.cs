@@ -3,6 +3,7 @@ using Authentication.Application.Abstractions.Persistence;
 using Authentication.Application.Common;
 using Authentication.Application.Errors;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Authentication.Application.Features.Authentication.GetCurrentUser;
 
@@ -11,13 +12,16 @@ public sealed class GetCurrentUserHandler
 {
     private readonly ICurrentUser _currentUser;
     private readonly IUserRepository _userRepository;
+    private readonly ILogger<GetCurrentUserHandler> _logger;
 
     public GetCurrentUserHandler(
         ICurrentUser currentUser,
-        IUserRepository userRepository)
+        IUserRepository userRepository,
+        ILogger<GetCurrentUserHandler> logger)
     {
         _currentUser = currentUser;
         _userRepository = userRepository;
+        _logger = logger;
     }
 
     public async Task<Result<GetCurrentUserResponse>> Handle(
@@ -28,6 +32,7 @@ public sealed class GetCurrentUserHandler
 
         if (userId == null)
         {
+            _logger.LogWarning("Authentication current-user lookup failed: user is not authenticated.");
             return Result<GetCurrentUserResponse>.Failure(
                 UserErrors.UserNotAuthenticated);
         }
@@ -38,6 +43,7 @@ public sealed class GetCurrentUserHandler
 
         if (user is null)
         {
+            _logger.LogWarning("Authentication current-user lookup failed: user was not found.");
             return Result<GetCurrentUserResponse>.Failure(
                 UserErrors.UserNotFound);
         }
@@ -50,6 +56,7 @@ public sealed class GetCurrentUserHandler
             user.Role.ToString(),
             user.Status == AccountStatus.Active);
 
+        _logger.LogInformation("Authentication current-user lookup succeeded.");
         return Result<GetCurrentUserResponse>.Success(response);
     }
 

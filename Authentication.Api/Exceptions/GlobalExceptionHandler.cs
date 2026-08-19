@@ -49,7 +49,10 @@ public sealed class GlobalExceptionHandler
 
         _logger.LogError(
             exception,
-            "An unhandled exception occurred.");
+            "Unhandled exception occurred while processing {Method} {Path}. TraceId: {TraceId}",
+            httpContext.Request.Method,
+            httpContext.Request.Path,
+            httpContext.TraceIdentifier);
 
         httpContext.Response.StatusCode =
             StatusCodes.Status500InternalServerError;

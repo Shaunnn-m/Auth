@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authentication.Infrastructu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authentication.Domain", "..\Authentication.Domain\Authentication.Domain.csproj", "{7E64FCCC-C267-499D-9DF5-269548DE345B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authentication.IntegrationTests", "..\Authentication.IntegrationTests\Authentication.IntegrationTests.csproj", "{B0BBF2D4-C482-4FCD-B906-C7068A526992}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{7E64FCCC-C267-499D-9DF5-269548DE345B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E64FCCC-C267-499D-9DF5-269548DE345B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E64FCCC-C267-499D-9DF5-269548DE345B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0BBF2D4-C482-4FCD-B906-C7068A526992}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0BBF2D4-C482-4FCD-B906-C7068A526992}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0BBF2D4-C482-4FCD-B906-C7068A526992}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0BBF2D4-C482-4FCD-B906-C7068A526992}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

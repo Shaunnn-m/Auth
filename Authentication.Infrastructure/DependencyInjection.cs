@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Authentication.Infrastructure.Authentications;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using Authentication.Infrastructure.HealthChecks;
 
 
 namespace Authentication.Infrastructure;
@@ -24,6 +25,11 @@ public static class DependencyInjection
             options.UseSqlServer(
                 configuration.GetConnectionString("DefaultConnection"));
         });
+
+        services.AddSingleton( new SqlServerHealthCheck(configuration));
+
+        services.AddHealthChecks()
+            .AddCheck<SqlServerHealthCheck>("sql-server");
 
         services.Configure<JwtOptions>(
             configuration.GetSection(JwtOptions.SectionName));

@@ -4,6 +4,7 @@ using MediatR;
 using Authentication.Application.Abstractions.Persistence;
 using Authentication.Application.Abstractions.Authentication;
 using Authentication.Domain.Entities;
+using Microsoft.Extensions.Logging;
 
 
 namespace Authentication.Application.Features.Authentication.Login;
@@ -17,6 +18,7 @@ public sealed class LoginUserHandler
     private readonly IRefreshTokenService _refreshTokenService;
     private readonly IRequestContext _requestContext;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ILogger<LoginUserHandler> _logger;
 
 
     public LoginUserHandler(
@@ -25,7 +27,8 @@ public sealed class LoginUserHandler
         IAuthenticationTokenService tokenService,
         IRefreshTokenService refreshTokenService,
         IRequestContext requestContext,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        ILogger<LoginUserHandler> logger)
     {
         _userRepository = userRepository;
         _passwordHasher = passwordHasher;
@@ -33,6 +36,7 @@ public sealed class LoginUserHandler
         _refreshTokenService = refreshTokenService;
         _requestContext = requestContext;
         _unitOfWork = unitOfWork;
+        _logger = logger;
     }
 
     public async Task<Result<LoginUserResponse>> Handle(
@@ -44,12 +48,16 @@ public sealed class LoginUserHandler
 
         if (user is null)
         {
+            _logger.LogWarning("Authentication login failed: user was not found.");
             return Result<LoginUserResponse>.Failure(
                 UserErrors.UserNotFound);
         }
 
         if (user.Status != AccountStatus.Active)
         {
+            _logger.LogWarning(
+                "Authentication login failed: account is not active. AccountStatus: {AccountStatus}",
+                user.Status);
             return Result<LoginUserResponse>.Failure(
                 UserErrors.UserInactive);
         }
@@ -60,6 +68,7 @@ public sealed class LoginUserHandler
 
         if (!passwordValid)
         {
+            _logger.LogWarning("Authentication login failed: invalid credentials.");
             return Result<LoginUserResponse>.Failure(
                 AuthenticationErrors.InvalidCredentials);
         }
@@ -96,6 +105,7 @@ public sealed class LoginUserHandler
             expiresAt,
             refreshToken);
 
+        _logger.LogInformation("Authentication login succeeded and a new session was created.");
         return Result<LoginUserResponse>.Success(response);
     }
 }

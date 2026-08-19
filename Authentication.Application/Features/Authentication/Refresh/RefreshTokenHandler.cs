@@ -4,6 +4,7 @@ using Authentication.Application.Common;
 using Authentication.Application.Abstractions.Persistence;
 using Authentication.Application.Errors;
 using Authentication.Domain.Entities;
+using Microsoft.Extensions.Logging;
 
 
 namespace Authentication.Application.Features.Authentication.Refresh;
@@ -15,17 +16,20 @@ public sealed class RefreshTokenHandler
     private readonly IRefreshTokenService _refreshTokenService;
     private readonly IAuthenticationTokenService _authenticationTokenService;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ILogger<RefreshTokenHandler> _logger;
 
     public RefreshTokenHandler(
         IUserRepository userRepository,
         IRefreshTokenService refreshTokenService,
         IAuthenticationTokenService authenticationTokenService,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        ILogger<RefreshTokenHandler> logger)
     {
         _userRepository = userRepository;
         _refreshTokenService = refreshTokenService;
         _authenticationTokenService = authenticationTokenService;
         _unitOfWork = unitOfWork;
+        _logger = logger;
     }
 
     public async Task<Result<RefreshTokenResponse>> Handle(
@@ -43,6 +47,7 @@ public sealed class RefreshTokenHandler
 
         if (storedToken is null)
         {
+            _logger.LogWarning("Authentication token refresh failed: refresh token is invalid.");
             return Result<RefreshTokenResponse>.Failure(AuthenticationErrors.InvalidRefreshToken);
         }
 
@@ -62,12 +67,16 @@ public sealed class RefreshTokenHandler
             await _unitOfWork.SaveChangesAsync(
                 cancellationToken);
 
+            _logger.LogWarning(
+                "Authentication token refresh failed: refresh token reuse detected. RevokedSessionCount: {RevokedSessionCount}",
+                activeTokens.Count);
             return Result<RefreshTokenResponse>.Failure(
                 AuthenticationErrors.SessionReuseDetected);
         }
 
         if (storedToken.IsExpired)
         {
+            _logger.LogWarning("Authentication token refresh failed: refresh token is expired.");
             return Result<RefreshTokenResponse>.Failure(
                 AuthenticationErrors.TokenExpired);
         }
@@ -79,11 +88,15 @@ public sealed class RefreshTokenHandler
 
         if (user is null)
         {
+            _logger.LogWarning("Authentication token refresh failed: user was not found.");
             return Result<RefreshTokenResponse>.Failure(AuthenticationErrors.InvalidRefreshToken);
         }
 
         if (user.Status != AccountStatus.Active)
         {
+            _logger.LogWarning(
+                "Authentication token refresh failed: account is not active. AccountStatus: {AccountStatus}",
+                user.Status);
             return Result<RefreshTokenResponse>.Failure(UserErrors.UserInactive);
         }
 
@@ -118,6 +131,7 @@ public sealed class RefreshTokenHandler
         await _unitOfWork.SaveChangesAsync(
             cancellationToken);
 
+        _logger.LogInformation("Authentication token refresh succeeded and the session was rotated.");
         return Result<RefreshTokenResponse>.Success(
             new RefreshTokenResponse(
                 accessToken.AccessToken,

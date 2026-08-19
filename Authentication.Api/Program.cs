@@ -3,16 +3,26 @@ using Authentication.Api.Exceptions;
 using Authentication.Infrastructure;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models; 
+using Microsoft.OpenApi.Models;
+using Serilog;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Authentication.Infrastructure.Configurations.Authentication;
 using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Host.UseSerilog(
+    (context, configuration) =>
+    {
+        configuration
+            .ReadFrom.Configuration(context.Configuration)
+            .Enrich.FromLogContext();
+    });
+
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddHealthChecks();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -96,6 +106,34 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseSerilogRequestLogging(options =>
+{
+    options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
+    {
+        diagnosticContext.Set(
+            "TraceId",
+            httpContext.TraceIdentifier);
+
+        diagnosticContext.Set(
+            "RequestPath",
+            httpContext.Request.Path);
+
+        diagnosticContext.Set(
+            "RequestMethod",
+            httpContext.Request.Method);
+
+        var userId = httpContext.User.FindFirst(
+            ClaimTypes.NameIdentifier)?.Value;
+
+        if (!string.IsNullOrWhiteSpace(userId))
+        {
+            diagnosticContext.Set(
+                "UserId",
+                userId);
+        }
+    };
+});
+
 app.UseExceptionHandler();
 
 app.UseAuthentication();
@@ -104,4 +142,10 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.MapHealthChecks("/health");
+
 app.Run();
+
+public partial class Program
+{
+}
