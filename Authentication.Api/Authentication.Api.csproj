@@ -9,16 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="appsettings.Test.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="appsettings.Test.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.1" />
     <PackageReference Include="MediatR" Version="14.2.0" />

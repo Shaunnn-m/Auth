@@ -1,0 +1,12 @@
+**/bin/
+**/obj/
+
+.git/
+.gitignore/
+
+.vs/
+
+**/appsettings.Development.json
+**/appsettings.Test.json
+
+README.md
