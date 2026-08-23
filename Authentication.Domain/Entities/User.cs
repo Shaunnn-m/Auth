@@ -17,6 +17,8 @@ namespace Authentication.Domain.Entities
 
         public ICollection<EmailConfirmationToken> EmailConfirmationTokens { get; private set; } = [];
 
+        public ICollection<PasswordResetToken> PasswordResetTokens { get; private set; } = [];
+
         private User()
         {
             // Required by Entity Framework Core
