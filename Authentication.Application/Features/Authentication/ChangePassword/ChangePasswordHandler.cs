@@ -1,9 +1,9 @@
 using MediatR;
 using Authentication.Application.Common;
 using Authentication.Application.Abstractions.Persistence;
-using Authentication.Application.Abstractions.Authentication;
 using Authentication.Application.Errors;
 using Microsoft.Extensions.Logging;
+using Authentication.Application.Interfaces.Authentication;
 
 namespace Authentication.Application.Features.Authentication.ChangePassword
 {

@@ -1,7 +1,7 @@
-using Authentication.Application.Abstractions.Authentication;
 using BCrypt.Net;
+using Authentication.Application.Interfaces.Authentication;
 
-namespace Authentication.Infrastructure.Authentication;
+namespace Authentication.Infrastructure.Services.Authentications;
 
 public sealed class PasswordHasher : IPasswordHasher
 {

@@ -1,7 +1,7 @@
-using Authentication.Application.Abstractions.Authentication;
+using Authentication.Application.Interfaces.Authentication;
 using Microsoft.AspNetCore.Http;
 
-namespace Authentication.Infrastructure.Authentications
+namespace Authentication.Infrastructure.Services.Authentications
 {
     public class RequestContext : IRequestContext
     {

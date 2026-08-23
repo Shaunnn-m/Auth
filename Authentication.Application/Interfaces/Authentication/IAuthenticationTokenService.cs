@@ -1,4 +1,4 @@
-namespace Authentication.Application.Abstractions.Authentication;
+namespace Authentication.Application.Interfaces.Authentication;
 
 public interface IAuthenticationTokenService
 {

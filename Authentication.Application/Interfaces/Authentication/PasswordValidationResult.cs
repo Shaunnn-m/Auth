@@ -1,6 +1,6 @@
 using Authentication.Application.Common;
 
-namespace Authentication.Application.Abstractions.Authentication;
+namespace Authentication.Application.Interfaces.Authentication;
 
 public sealed record PasswordValidationResult
 {

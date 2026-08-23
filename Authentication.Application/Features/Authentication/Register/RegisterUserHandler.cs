@@ -1,10 +1,13 @@
-using Authentication.Application.Abstractions.Authentication;
 using Authentication.Application.Abstractions.Persistence;
 using Authentication.Domain.Entities;
 using Authentication.Application.Common;
 using MediatR;
 using Authentication.Application.Errors;
 using Microsoft.Extensions.Logging;
+using Authentication.Application.Persistence;
+using Authentication.Application.Interfaces.Authentication;
+using Authentication.Application.Interfaces.Common;
+
 
 namespace Authentication.Application.Features.Authentication.Register;
 
@@ -15,6 +18,9 @@ public sealed class RegisterUserHandler
     private readonly IPasswordHasher _passwordHasher;
     private readonly IPasswordPolicy _passwordPolicy;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IEmailConfirmationTokenService _emailConfirmationTokenService;
+    private readonly IEmailConfirmationTokenRepository _emailConfirmationTokenRepository;
+    private readonly IEmailService _emailService;
     private readonly ILogger<RegisterUserHandler> _logger;
 
     public RegisterUserHandler(
@@ -22,12 +28,18 @@ public sealed class RegisterUserHandler
         IPasswordHasher passwordHasher,
         IPasswordPolicy passwordPolicy,
         IUnitOfWork unitOfWork,
+        IEmailConfirmationTokenService emailConfirmationTokenService,
+        IEmailConfirmationTokenRepository emailConfirmationTokenRepository,
+        IEmailService emailService,
         ILogger<RegisterUserHandler> logger)
     {
         _userRepository = userRepository;
         _passwordHasher = passwordHasher;
         _passwordPolicy = passwordPolicy;
         _unitOfWork = unitOfWork;
+        _emailConfirmationTokenService = emailConfirmationTokenService;
+        _emailConfirmationTokenRepository = emailConfirmationTokenRepository;
+        _emailService = emailService;
         _logger = logger;
     }
 
@@ -65,11 +77,35 @@ public sealed class RegisterUserHandler
             request.Email,
             passwordHash);
 
+        var rawToken = _emailConfirmationTokenService.GenerateToken();
+
+        var tokenHash = _emailConfirmationTokenService.HashToken(rawToken);
+
+        var confirmationToken =
+            EmailConfirmationToken.Create(
+                user.Id,
+                tokenHash,
+                DateTime.UtcNow.AddMinutes(30));
+
         await _userRepository.AddAsync(
             user,
             cancellationToken);
 
+        await _emailConfirmationTokenRepository
+        .AddAsync(
+            confirmationToken,
+            cancellationToken);
+
         await _unitOfWork.SaveChangesAsync(
+            cancellationToken);
+
+        _emailConfirmationTokenService.GenerateConfirmationLink(
+            user.Id,
+            rawToken);
+
+        await _emailService.SendEmailConfirmationAsync(
+            user.Email,
+            _emailConfirmationTokenService.GenerateConfirmationLink(user.Id, rawToken),
             cancellationToken);
 
         _logger.LogInformation("Authentication registration succeeded.");

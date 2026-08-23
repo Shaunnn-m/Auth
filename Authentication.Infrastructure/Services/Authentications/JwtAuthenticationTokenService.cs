@@ -1,12 +1,12 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Authentication.Application.Abstractions.Authentication;
+using Authentication.Application.Interfaces.Authentication;
 using Authentication.Infrastructure.Configurations.Authentication;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Authentication.Infrastructure.Authentication;
+namespace Authentication.Infrastructure.Services.Authentications;
 
 public sealed class JwtAuthenticationTokenService
     : IAuthenticationTokenService

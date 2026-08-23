@@ -12,6 +12,10 @@ public interface IUserRepository
         User user,
         CancellationToken cancellationToken = default);
 
+    Task AddRefreshTokenAsync(
+        RefreshToken refreshToken,
+        CancellationToken cancellationToken = default);
+
     Task UpdateAsync(
         User user,
         CancellationToken cancellationToken = default);

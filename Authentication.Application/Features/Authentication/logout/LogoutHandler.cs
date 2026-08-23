@@ -1,11 +1,11 @@
 using MediatR;
 using Authentication.Application.Common;
 using Authentication.Application.Abstractions.Persistence;
-using Authentication.Application.Abstractions.Authentication;
 using Authentication.Application.Features.Authentication.logout;
 using Authentication.Application.Errors;
 using Authentication.Application.Features.Authentication.Refresh;
 using Microsoft.Extensions.Logging;
+using Authentication.Application.Interfaces.Authentication;
 
 namespace Authentication.Application.Features.Authentication.Logout;
 

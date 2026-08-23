@@ -59,5 +59,29 @@ namespace Authentication.Application.Errors
                 "A reuse of a revoked refresh token has been detected.",
                 401);
 
+        public static readonly Error InvalidEmailConfirmationToken =
+            new(
+                "Authentication.InvalidEmailConfirmationToken",
+                "The email confirmation token is invalid.",
+                401);
+
+        public static readonly Error EmailConfirmationTokenExpired =
+            new(
+                "Authentication.EmailConfirmationTokenExpired",
+                "The email confirmation token has expired.",
+                401);
+
+        public static readonly Error EmailConfirmationTokenUsed =
+            new(
+                "Authentication.EmailConfirmationTokenUsed",
+                "The email confirmation token has already been used.",
+                409);
+
+        public static readonly Error EmailAlreadyConfirmed =
+            new(
+                "Authentication.EmailAlreadyConfirmed",
+                "The email address has already been confirmed.",
+                409);
+
     }
 }

@@ -15,6 +15,8 @@ namespace Authentication.Domain.Entities
 
         private List<RefreshToken> _refreshTokens = [];
 
+        public ICollection<EmailConfirmationToken> EmailConfirmationTokens { get; private set; } = [];
+
         private User()
         {
             // Required by Entity Framework Core

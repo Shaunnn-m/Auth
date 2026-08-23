@@ -10,6 +10,8 @@ using Authentication.Application.Features.Authentication.Refresh;
 using Authentication.Application.Features.Authentication.Logout;
 using Authentication.Application.Features.Authentication.Sessions;
 using Authentication.Application.Features.Authentication.ChangePassword;
+using Authentication.Application.Features.Authentication.ConfirmEmail;
+using Authentication.Application.Features.Authentication.ResendEmailConfirmation;
 using Microsoft.AspNetCore.RateLimiting;
 
 namespace Authentication.Api.Controllers;
@@ -80,6 +82,46 @@ public sealed class AuthenticationController : ControllerBase
     {
         var command = new ActivateUserCommand(userId);
 
+        var result = await _sender.Send(
+            command,
+            cancellationToken);
+
+        return result.ToActionResult(
+            this,
+            StatusCodes.Status200OK);
+    }
+
+    [AllowAnonymous]
+    [HttpPost("confirm-email")]
+    [ProducesResponseType(typeof(ConfirmEmailResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> ConfirmEmail(
+        ConfirmEmailCommand command,
+        CancellationToken cancellationToken)
+    {
+        var result = await _sender.Send(
+            command,
+            cancellationToken);
+
+        return result.ToActionResult(
+            this,
+            StatusCodes.Status200OK);
+    }
+
+    [AllowAnonymous]
+    [HttpPost("resend-email-confirmation")]
+    [ProducesResponseType(typeof(ResendEmailConfirmationResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> ResendEmailConfirmation(
+        ResendEmailConfirmationCommand command,
+        CancellationToken cancellationToken)
+    {
         var result = await _sender.Send(
             command,
             cancellationToken);

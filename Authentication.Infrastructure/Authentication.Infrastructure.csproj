@@ -26,4 +26,12 @@
     <ProjectReference Include="..\Authentication.Domain\Authentication.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Templates\Email\" />
+  </ItemGroup>
+
+    <ItemGroup>
+	    <EmbeddedResource Include="Templates\Email\*.html" />
+    </ItemGroup>
+
 </Project>

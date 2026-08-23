@@ -1,8 +1,8 @@
-using Authentication.Application.Abstractions.Authentication;
+using Authentication.Application.Interfaces.Authentication;
 using Authentication.Infrastructure.Configurations.Authentication;
 using Microsoft.Extensions.Options;
 
-namespace Authentication.Infrastructure.Authentication;
+namespace Authentication.Infrastructure.Services.Authentications;
 
 public sealed class PasswordPolicy : IPasswordPolicy
 {

@@ -1,15 +1,19 @@
-using Authentication.Application.Abstractions.Authentication;
 using Authentication.Application.Abstractions.Persistence;
 using Authentication.Infrastructure.Persistence.Repositories;
 using Authentication.Infrastructure.Persistence;
-using Authentication.Infrastructure.Authentication;
 using Authentication.Infrastructure.Data;
 using Authentication.Infrastructure.Configurations.Authentication;
 using Microsoft.EntityFrameworkCore;
-using Authentication.Infrastructure.Authentications;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Authentication.Infrastructure.HealthChecks;
+using Authentication.Application.Persistence;
+using Authentication.Application.Interfaces.Authentication;
+using Authentication.Infrastructure.Services.Authentications;
+using Authentication.Infrastructure.Configurations.Email;
+using Authentication.Application.Interfaces.Common;
+using Authentication.Infrastructure.Services.Email;
+using Authentication.Infrastructure.Configurations;
 
 
 namespace Authentication.Infrastructure;
@@ -27,6 +31,8 @@ public static class DependencyInjection
         });
 
         services.AddSingleton( new SqlServerHealthCheck(configuration));
+
+        services.AddSingleton<EmailTemplateService>();
 
         services.AddHealthChecks()
             .AddCheck<SqlServerHealthCheck>("sql-server");
@@ -47,6 +53,11 @@ public static class DependencyInjection
         services.Configure<PasswordOptions>(
             configuration.GetSection(PasswordOptions.SectionName));
 
+        services.Configure<SmtpOptions>(configuration.GetSection(
+            SmtpOptions.SectionName));
+
+        services.Configure<ApplicationOptions>(configuration.GetSection(
+            ApplicationOptions.SectionName));
 
         services.AddScoped<IUserRepository, UserRepository>();
 
@@ -63,6 +74,13 @@ public static class DependencyInjection
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 
         services.AddScoped<IRequestContext, RequestContext>();
+
+        services.AddScoped<IEmailConfirmationTokenService, EmailConfirmationTokenService>();
+
+        services.AddScoped<IEmailConfirmationTokenRepository, EmailConfirmationTokenRepository>();
+
+        services.AddScoped<IEmailService, SmtpEmailService>();
+
 
         return services;
     }

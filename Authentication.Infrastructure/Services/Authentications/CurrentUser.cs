@@ -1,8 +1,8 @@
-﻿using Authentication.Application.Abstractions.Authentication;
+﻿using Authentication.Application.Interfaces.Authentication;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
-namespace Authentication.Infrastructure.Authentications
+namespace Authentication.Infrastructure.Services.Authentications
 {
     public sealed class CurrentUser : ICurrentUser
     {

@@ -2,9 +2,9 @@ using Authentication.Application.Errors;
 using Authentication.Application.Common;
 using MediatR;
 using Authentication.Application.Abstractions.Persistence;
-using Authentication.Application.Abstractions.Authentication;
 using Authentication.Domain.Entities;
 using Microsoft.Extensions.Logging;
+using Authentication.Application.Interfaces.Authentication;
 
 
 namespace Authentication.Application.Features.Authentication.Login;
@@ -95,7 +95,9 @@ public sealed class LoginUserHandler
 
         user.AddRefreshToken(refreshTokenEntity);
 
-        await _userRepository.UpdateAsync(user, cancellationToken);
+        await _userRepository.AddRefreshTokenAsync(
+            refreshTokenEntity,
+            cancellationToken);
 
         await _unitOfWork.SaveChangesAsync(
             cancellationToken);

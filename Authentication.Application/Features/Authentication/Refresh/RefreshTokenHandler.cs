@@ -1,10 +1,10 @@
-using Authentication.Application.Abstractions.Authentication;
 using MediatR;
 using Authentication.Application.Common;
 using Authentication.Application.Abstractions.Persistence;
 using Authentication.Application.Errors;
 using Authentication.Domain.Entities;
 using Microsoft.Extensions.Logging;
+using Authentication.Application.Interfaces.Authentication;
 
 
 namespace Authentication.Application.Features.Authentication.Refresh;
@@ -121,6 +121,10 @@ public sealed class RefreshTokenHandler
 
         user.AddRefreshToken(
             newRefreshTokenEntity);
+
+        await _userRepository.AddRefreshTokenAsync(
+            newRefreshTokenEntity,
+            cancellationToken);
 
         var accessToken =
             _authenticationTokenService.GenerateToken(
