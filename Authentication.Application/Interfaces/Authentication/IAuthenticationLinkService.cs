@@ -6,7 +6,14 @@ using System.Threading.Tasks;
 
 namespace Authentication.Application.Interfaces.Authentication
 {
-    interface IAuthenticationLinkService
+    public interface IAuthenticationLinkService
     {
+        string GenerateEmailConfirmationLink(
+            Guid userId,
+            string token);
+
+        string GeneratePasswordResetLink(
+            Guid userId,
+            string token);
     }
 }

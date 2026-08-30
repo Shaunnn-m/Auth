@@ -20,8 +20,9 @@ public sealed class ResendEmailConfirmationHandler
     private readonly IUserRepository _userRepository;
     private readonly IEmailConfirmationTokenRepository
         _emailConfirmationTokenRepository;
-    private readonly IEmailConfirmationTokenService
-        _emailConfirmationTokenService;
+    private readonly IAuthenticationLinkService 
+        _authenticationLinkService;
+    private readonly ISecureTokenService _secureTokenService;
     private readonly IEmailService _emailService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<ResendEmailConfirmationHandler>
@@ -31,18 +32,19 @@ public sealed class ResendEmailConfirmationHandler
         IUserRepository userRepository,
         IEmailConfirmationTokenRepository
             emailConfirmationTokenRepository,
-        IEmailConfirmationTokenService
-            emailConfirmationTokenService,
+        IAuthenticationLinkService authenticationLinkService,
         IEmailService emailService,
         IUnitOfWork unitOfWork,
+        ISecureTokenService secureTokenService,
         ILogger<ResendEmailConfirmationHandler> logger)
     {
         _userRepository = userRepository;
         _emailConfirmationTokenRepository =
             emailConfirmationTokenRepository;
-        _emailConfirmationTokenService =
-            emailConfirmationTokenService;
+        _authenticationLinkService =
+            authenticationLinkService;
         _emailService = emailService;
+        _secureTokenService = secureTokenService;
         _unitOfWork = unitOfWork;
         _logger = logger;
     }
@@ -88,11 +90,11 @@ public sealed class ResendEmailConfirmationHandler
         }
 
         var rawToken =
-            _emailConfirmationTokenService
+            _secureTokenService
                 .GenerateToken();
 
         var tokenHash =
-            _emailConfirmationTokenService
+            _secureTokenService
                 .HashToken(rawToken);
 
         var confirmationToken =
@@ -110,8 +112,8 @@ public sealed class ResendEmailConfirmationHandler
             cancellationToken);
 
         var confirmationLink =
-            _emailConfirmationTokenService
-                .GenerateConfirmationLink(
+            _authenticationLinkService
+                .GeneratePasswordResetLink(
                     user.Id,
                     rawToken);
 

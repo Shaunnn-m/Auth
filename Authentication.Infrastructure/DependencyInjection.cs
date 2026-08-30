@@ -14,6 +14,7 @@ using Authentication.Infrastructure.Configurations.Email;
 using Authentication.Application.Interfaces.Common;
 using Authentication.Infrastructure.Services.Email;
 using Authentication.Infrastructure.Configurations;
+using Authentication.Infrastructure.Services.Common;
 
 
 namespace Authentication.Infrastructure;
@@ -75,11 +76,15 @@ public static class DependencyInjection
 
         services.AddScoped<IRequestContext, RequestContext>();
 
-        services.AddScoped<IEmailConfirmationTokenService, EmailConfirmationTokenService>();
-
         services.AddScoped<IEmailConfirmationTokenRepository, EmailConfirmationTokenRepository>();
 
         services.AddScoped<IEmailService, SmtpEmailService>();
+
+        services.AddScoped<ISecureTokenService, SecureTokenService>();
+
+        services.AddScoped<
+            IAuthenticationLinkService,
+            AuthenticationLinkService>();
 
 
         return services;

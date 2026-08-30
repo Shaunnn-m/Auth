@@ -18,7 +18,8 @@ public sealed class RegisterUserHandler
     private readonly IPasswordHasher _passwordHasher;
     private readonly IPasswordPolicy _passwordPolicy;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IEmailConfirmationTokenService _emailConfirmationTokenService;
+    private readonly ISecureTokenService _secureTokenService;
+    private readonly IAuthenticationLinkService _authenticationLinkService;
     private readonly IEmailConfirmationTokenRepository _emailConfirmationTokenRepository;
     private readonly IEmailService _emailService;
     private readonly ILogger<RegisterUserHandler> _logger;
@@ -28,17 +29,19 @@ public sealed class RegisterUserHandler
         IPasswordHasher passwordHasher,
         IPasswordPolicy passwordPolicy,
         IUnitOfWork unitOfWork,
-        IEmailConfirmationTokenService emailConfirmationTokenService,
+        IAuthenticationLinkService authenticationLinkService,
         IEmailConfirmationTokenRepository emailConfirmationTokenRepository,
         IEmailService emailService,
+        ISecureTokenService secureTokenService,
         ILogger<RegisterUserHandler> logger)
     {
         _userRepository = userRepository;
         _passwordHasher = passwordHasher;
         _passwordPolicy = passwordPolicy;
         _unitOfWork = unitOfWork;
-        _emailConfirmationTokenService = emailConfirmationTokenService;
+        _authenticationLinkService = authenticationLinkService;
         _emailConfirmationTokenRepository = emailConfirmationTokenRepository;
+        _secureTokenService = secureTokenService;
         _emailService = emailService;
         _logger = logger;
     }
@@ -77,9 +80,9 @@ public sealed class RegisterUserHandler
             request.Email,
             passwordHash);
 
-        var rawToken = _emailConfirmationTokenService.GenerateToken();
+        var rawToken = _secureTokenService.GenerateToken();
 
-        var tokenHash = _emailConfirmationTokenService.HashToken(rawToken);
+        var tokenHash = _secureTokenService.HashToken(rawToken);
 
         var confirmationToken =
             EmailConfirmationToken.Create(
@@ -99,13 +102,11 @@ public sealed class RegisterUserHandler
         await _unitOfWork.SaveChangesAsync(
             cancellationToken);
 
-        _emailConfirmationTokenService.GenerateConfirmationLink(
-            user.Id,
-            rawToken);
+        var confirmationLink = _authenticationLinkService.GenerateEmailConfirmationLink(user.Id, rawToken);
 
         await _emailService.SendEmailConfirmationAsync(
             user.Email,
-            _emailConfirmationTokenService.GenerateConfirmationLink(user.Id, rawToken),
+            confirmationLink,
             cancellationToken);
 
         _logger.LogInformation("Authentication registration succeeded.");

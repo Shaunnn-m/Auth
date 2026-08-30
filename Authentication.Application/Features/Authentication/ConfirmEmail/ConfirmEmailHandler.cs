@@ -5,7 +5,7 @@ using Authentication.Application.Interfaces.Authentication;
 using Authentication.Application.Persistence;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Authentication.Domain.Enums;
+using Authentication.Application.Interfaces.Common;
 
 namespace Authentication.Application.Features.Authentication.ConfirmEmail;
 
@@ -24,15 +24,20 @@ public sealed class ConfirmEmailHandler
     private readonly ILogger<ConfirmEmailHandler>
         _logger;
 
+    private readonly ISecureTokenService
+        _secureTokenService;
+
     public ConfirmEmailHandler(
         IEmailConfirmationTokenService tokenService,
         IEmailConfirmationTokenRepository tokenRepository,
         IUnitOfWork unitOfWork,
+        ISecureTokenService secureTokenService,
         ILogger<ConfirmEmailHandler> logger)
     {
         _tokenService = tokenService;
         _tokenRepository = tokenRepository;
         _unitOfWork = unitOfWork;
+        _secureTokenService = secureTokenService;
         _logger = logger;
     }
 
@@ -41,7 +46,7 @@ public sealed class ConfirmEmailHandler
         CancellationToken cancellationToken)
     {
         var tokenHash =
-            _tokenService.HashToken(
+            _secureTokenService.HashToken(
                 request.Token);
 
         var confirmationToken =
