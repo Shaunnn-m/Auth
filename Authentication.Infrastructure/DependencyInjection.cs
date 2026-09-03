@@ -1,4 +1,3 @@
-using Authentication.Application.Abstractions.Persistence;
 using Authentication.Infrastructure.Persistence.Repositories;
 using Authentication.Infrastructure.Persistence;
 using Authentication.Infrastructure.Data;
@@ -7,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Authentication.Infrastructure.HealthChecks;
-using Authentication.Application.Persistence;
 using Authentication.Application.Interfaces.Authentication;
 using Authentication.Infrastructure.Services.Authentications;
 using Authentication.Infrastructure.Configurations.Email;
@@ -15,6 +13,8 @@ using Authentication.Application.Interfaces.Common;
 using Authentication.Infrastructure.Services.Email;
 using Authentication.Infrastructure.Configurations;
 using Authentication.Infrastructure.Services.Common;
+using Authentication.Application.Interfaces.Persistence;
+using Authentication.Infrastructure.Data.Repositories;
 
 
 namespace Authentication.Infrastructure;
@@ -80,11 +80,15 @@ public static class DependencyInjection
 
         services.AddScoped<IEmailService, SmtpEmailService>();
 
-        services.AddScoped<ISecureTokenService, SecureTokenService>();
+        services.AddTransient<ISecureTokenService, SecureTokenService>();
 
         services.AddScoped<
             IAuthenticationLinkService,
             AuthenticationLinkService>();
+
+        services.AddScoped<
+            IPasswordResetTokenRepository,
+            PasswordResetTokenRepository>();
 
 
         return services;

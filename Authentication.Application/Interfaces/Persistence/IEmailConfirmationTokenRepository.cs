@@ -1,6 +1,6 @@
 ﻿using Authentication.Domain.Entities;
 
-namespace Authentication.Application.Persistence
+namespace Authentication.Application.Interfaces.Persistence
 {
     public interface IEmailConfirmationTokenRepository
     {

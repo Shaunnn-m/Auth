@@ -1,7 +1,7 @@
-﻿using Authentication.Application.Abstractions.Persistence;
-using Authentication.Application.Common;
+﻿using Authentication.Application.Common;
 using Authentication.Application.Errors;
 using Authentication.Application.Features.Authentication.Login;
+using Authentication.Application.Interfaces.Persistence;
 using MediatR;
 using Microsoft.Extensions.Logging;
 

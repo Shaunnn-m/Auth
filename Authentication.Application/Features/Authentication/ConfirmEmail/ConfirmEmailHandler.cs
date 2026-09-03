@@ -1,19 +1,16 @@
-﻿using Authentication.Application.Abstractions.Persistence;
-using Authentication.Application.Common;
+﻿using Authentication.Application.Common;
 using Authentication.Application.Errors;
 using Authentication.Application.Interfaces.Authentication;
-using Authentication.Application.Persistence;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Authentication.Application.Interfaces.Common;
+using Authentication.Application.Interfaces.Persistence;
 
 namespace Authentication.Application.Features.Authentication.ConfirmEmail;
 
 public sealed class ConfirmEmailHandler
     : IRequestHandler<ConfirmEmailCommand, Result<ConfirmEmailResponse>>
 {
-    private readonly IEmailConfirmationTokenService
-        _tokenService;
 
     private readonly IEmailConfirmationTokenRepository
         _tokenRepository;
@@ -28,13 +25,11 @@ public sealed class ConfirmEmailHandler
         _secureTokenService;
 
     public ConfirmEmailHandler(
-        IEmailConfirmationTokenService tokenService,
         IEmailConfirmationTokenRepository tokenRepository,
         IUnitOfWork unitOfWork,
         ISecureTokenService secureTokenService,
         ILogger<ConfirmEmailHandler> logger)
     {
-        _tokenService = tokenService;
         _tokenRepository = tokenRepository;
         _unitOfWork = unitOfWork;
         _secureTokenService = secureTokenService;
@@ -49,7 +44,7 @@ public sealed class ConfirmEmailHandler
             _secureTokenService.HashToken(
                 request.Token);
 
-        var confirmationToken =
+         var confirmationToken =
             await _tokenRepository.GetByTokenHashAsync(
                 tokenHash,
                 cancellationToken);

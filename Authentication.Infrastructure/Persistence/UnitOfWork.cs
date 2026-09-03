@@ -1,4 +1,4 @@
-﻿using Authentication.Application.Abstractions.Persistence;
+﻿using Authentication.Application.Interfaces.Persistence;
 using Authentication.Infrastructure.Data;
 
 namespace Authentication.Infrastructure.Persistence

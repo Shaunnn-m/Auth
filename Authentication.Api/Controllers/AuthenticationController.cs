@@ -13,12 +13,13 @@ using Authentication.Application.Features.Authentication.ChangePassword;
 using Authentication.Application.Features.Authentication.ConfirmEmail;
 using Authentication.Application.Features.Authentication.ResendEmailConfirmation;
 using Microsoft.AspNetCore.RateLimiting;
+using Authentication.Application.Features.Authentication.ForgotPassword;
 
 namespace Authentication.Api.Controllers;
 
 [ApiController]
 [Route("api/authentication")]
-[EnableRateLimiting("authentication")]  
+[EnableRateLimiting("authentication")]
 public sealed class AuthenticationController : ControllerBase
 {
     private readonly ISender _sender;
@@ -256,5 +257,21 @@ public sealed class AuthenticationController : ControllerBase
         return result.ToActionResult(
             this,
             StatusCodes.Status200OK);
+    }
+
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword(
+    [FromBody] ForgotPasswordCommand command,
+    CancellationToken cancellationToken)
+    {
+        var result = await _sender.Send(
+            command,
+            cancellationToken);
+
+        return result.ToActionResult(
+            this,
+            StatusCodes.Status200OK
+            );
+
     }
 }

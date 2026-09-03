@@ -8,5 +8,10 @@ namespace Authentication.Application.Interfaces.Common
             string email,
             string confirmationLink,
             CancellationToken cancellationToken);
+
+        Task SendPasswordResetEmailAsync(
+            string email,
+            string resetLink,
+            CancellationToken cancellationToken);
     }
 }

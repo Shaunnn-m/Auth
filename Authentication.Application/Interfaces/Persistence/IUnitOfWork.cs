@@ -1,4 +1,4 @@
-namespace Authentication.Application.Abstractions.Persistence;
+namespace Authentication.Application.Interfaces.Persistence;
 
 public interface IUnitOfWork
 {

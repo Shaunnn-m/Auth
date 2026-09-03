@@ -1,4 +1,4 @@
-using Authentication.Application.Abstractions.Persistence;
+using Authentication.Application.Interfaces.Persistence;
 using Authentication.Domain.Entities;
 using Authentication.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;

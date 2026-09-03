@@ -1,9 +1,8 @@
-using Authentication.Application.Abstractions.Persistence;
 using Authentication.Application.Common;
 using Authentication.Application.Errors;
 using Authentication.Application.Interfaces.Authentication;
 using Authentication.Application.Interfaces.Common;
-using Authentication.Application.Persistence;
+using Authentication.Application.Interfaces.Persistence;
 using Authentication.Domain.Entities;
 using Authentication.Domain.Enums;
 using MediatR;

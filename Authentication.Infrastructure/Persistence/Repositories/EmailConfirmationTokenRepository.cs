@@ -1,7 +1,7 @@
-﻿using Authentication.Application.Persistence;
-using Authentication.Infrastructure.Data;
+﻿using Authentication.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Authentication.Domain.Entities;
+using Authentication.Application.Interfaces.Persistence;
 
 namespace Authentication.Infrastructure.Persistence.Repositories
 {

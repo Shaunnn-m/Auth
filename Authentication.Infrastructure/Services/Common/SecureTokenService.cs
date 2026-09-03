@@ -1,4 +1,7 @@
 using Authentication.Application.Common;
+using Authentication.Application.Interfaces.Common;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Authentication.Infrastructure.Services.Common
 {

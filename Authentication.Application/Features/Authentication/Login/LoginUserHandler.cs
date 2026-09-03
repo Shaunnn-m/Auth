@@ -1,10 +1,10 @@
 using Authentication.Application.Errors;
 using Authentication.Application.Common;
 using MediatR;
-using Authentication.Application.Abstractions.Persistence;
 using Authentication.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using Authentication.Application.Interfaces.Authentication;
+using Authentication.Application.Interfaces.Persistence;
 
 
 namespace Authentication.Application.Features.Authentication.Login;
